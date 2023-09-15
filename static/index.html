@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <style>
+body {{
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+}}
+h2 {{
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+}}
+form {{
+      margin-bottom: 20px;
+}}
+input[type="submit"] {{
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-decoration: none;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 4px;
+}}
+.show {{
+      background-color: white;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}}
+p {{
+      margin: 5px 0;
+}}
+  </style>
+  <meta http-equiv="refresh" content="30">
+                 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+                 <script type="text/javascript">
+                     google.charts.load("current", {{"packages":["corechart"]}});
+                      google.charts.setOnLoadCallback(drawChart);
+                     function drawChart() {{
+                              var data = google.visualization.arrayToDataTable([
+                                  ["Time", "CO2 [ppm]"],
+                                  {plot_data}
+                                  ]);
+                         var options = {{
+                              title: "Air Quality Graph",
+                              curveType: "function",
+                                 legend: {{ position: "bottom" }}
+                         }};
+                          var chart = new google.visualization.LineChart(document.getElementById("sensordata_container"));
+                          chart.draw(data, options);
+                     }}
+                      </script>
+</head>
+<body>
+  <form action="./light{nstate}">
+    <input type="submit" value="Light {nstate}" />
+  </form>
+  <div class="show">
+    <h2>System Information</h2>
+    <p>LED is {state}</p>
+    <p>CPU Temperature is {cpu_temperature}°C</p>
+  </div>
+  <div class="show">
+    <h2>Air Quality</h2>
+    <p style="background-color:{co2_level}; padding: 10px;">CO2 is {co2} ppm</p>
+    <p>TVOC is {tvoc} ppb</p>
+    <p>Temperature is {temperature}°C</p>
+    <p>Humidity is {humidity}%</p>
+  </div>
+  <div class="show">
+      <h2>Plot</h2>
+      <div id="sensordata_container" style="width: 900px; height: 500px"></div>
+  </div>
+      
+</body>
+</html>
+
