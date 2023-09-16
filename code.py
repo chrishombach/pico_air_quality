@@ -138,6 +138,7 @@ def connect(ccs811, dht, led, plot_data):
 
 def serve(server, ccs811, lights, led, plot_data):
     MEASUREMENT_INTERVAL = 2.0
+    DATA_SNAPSHOT_INTERVAL = 60.0
     LAST_MEASUREMENT = -1
     RELOADER = 0
     while not ccs811.data_ready:
@@ -158,10 +159,11 @@ def serve(server, ccs811, lights, led, plot_data):
                         lights[i].value = co2_level.lights[i]
                     else:
                         lights[i].value = False
-                plot_data.add_data(now, co2)
                 LAST_MEASUREMENT = now
+            if now >= LAST_MEASUREMENT + DATA_SNAPSHOT_INTERVAL:
+                plot_data.add_data(now, co2)
                 RELOADER += MEASUREMENT_INTERVAL
-            if RELOADER >= 86400:
+            if RELOADER >= 8640:
                 RELOADER = 0
                 plot_data.reset_data()
             pool_result = server.poll()
