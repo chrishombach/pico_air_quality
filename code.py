@@ -140,7 +140,11 @@ def serve(server, ccs811, lights, led, plot_data):
     MEASUREMENT_INTERVAL = 2.0
     DATA_SNAPSHOT_INTERVAL = 60.0
     LAST_MEASUREMENT = -1
+    LAST_SNAPSHOT_DATA = -1
     RELOADER = 0
+    co2 = ccs811.eco2
+    now = time.monotonic()
+    plot_data.add_data(now, co2)
     while not ccs811.data_ready:
         pass
     while True:
@@ -160,10 +164,11 @@ def serve(server, ccs811, lights, led, plot_data):
                     else:
                         lights[i].value = False
                 LAST_MEASUREMENT = now
-            if now >= LAST_MEASUREMENT + DATA_SNAPSHOT_INTERVAL:
+            if now >= LAST_SNAPSHOT_DATA + DATA_SNAPSHOT_INTERVAL:
                 plot_data.add_data(now, co2)
-                RELOADER += MEASUREMENT_INTERVAL
-            if RELOADER >= 8640:
+                RELOADER += DATA_SNAPSHOT_INTERVAL 
+                LAST_SNAPSHOT_DATA = now
+            if RELOADER >= 86400:
                 RELOADER = 0
                 plot_data.reset_data()
             pool_result = server.poll()
