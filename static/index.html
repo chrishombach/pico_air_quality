@@ -44,7 +44,7 @@ p {{
                       google.charts.setOnLoadCallback(drawChart);
                      function drawChart() {{
                               var data = google.visualization.arrayToDataTable([
-                                  ["Time", "CO2 [ppm]"],
+                                  ["Time", "CO2 [ppm]", "OK", "Too High"],
                                   {plot_data}
                                   ]);
                          var options = {{

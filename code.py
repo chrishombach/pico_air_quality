@@ -6,7 +6,6 @@ import digitalio
 import board
 import adafruit_ccs811
 import adafruit_dht
-from adafruit_datetime import datetime
 import busio
 import time
 
@@ -33,13 +32,16 @@ class CO2Level():
             self.lights = (True, False, False)
 
 class PlotData():
-    data_str = ""
+    data = []
 
     def add_data(self, index, co2):
-        self.data_str += f"[{index},{co2}],"
+        if len(self.data) > 120:
+            self.data.pop(0)
+        self.data.append([index, co2, 1000, 2000])
 
-    def reset_data(self):
-        self.data_str = ""
+    @property
+    def data_str(self):
+        return str(self.data)[1:-1]
 
 
 def get_co2_level(co2):
@@ -144,9 +146,9 @@ def serve(server, ccs811, lights, led, plot_data):
     RELOADER = 0
     co2 = ccs811.eco2
     now = time.monotonic()
-    plot_data.add_data(now, co2)
     while not ccs811.data_ready:
         pass
+    plot_data.add_data(now, co2)
     while True:
         try:
             # Do something useful in this section,
@@ -166,11 +168,7 @@ def serve(server, ccs811, lights, led, plot_data):
                 LAST_MEASUREMENT = now
             if now >= LAST_SNAPSHOT_DATA + DATA_SNAPSHOT_INTERVAL:
                 plot_data.add_data(now, co2)
-                RELOADER += DATA_SNAPSHOT_INTERVAL 
                 LAST_SNAPSHOT_DATA = now
-            if RELOADER >= 86400:
-                RELOADER = 0
-                plot_data.reset_data()
             pool_result = server.poll()
             if pool_result == REQUEST_HANDLED_RESPONSE_SENT:
                 pass
