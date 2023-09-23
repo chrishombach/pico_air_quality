@@ -37,7 +37,7 @@ class PlotData():
     def add_data(self, index, co2):
         if co2 is None:
             return
-        if len(self.data) > 120:
+        if len(self.data) > 60:
             self.data.pop(0)
         self.data.append([index, co2, 1000, 2000])
 
