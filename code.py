@@ -43,7 +43,7 @@ class PlotData():
 
     @property
     def data_str(self):
-        return str(self.data)[1:-1]
+        return ',\n\t\t'.join(str(x) for x in self.data)
 
 
 def get_co2_level(co2):
